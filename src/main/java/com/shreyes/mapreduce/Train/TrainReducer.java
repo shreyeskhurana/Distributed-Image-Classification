@@ -9,7 +9,10 @@ public class TrainReducer extends Reducer <Text, HyperPlane, Text, HyperPlane>{
     private Double[] w = new Double[21*21*7];
     private Double b = 0.0, count = 0.0;
 
-    TrainReducer() {
+    @Override
+    protected void setup(Context context) throws IOException, InterruptedException {
+        super.setup(context);
+
         for(Double wi: w) {
             wi = 0.0;
         }

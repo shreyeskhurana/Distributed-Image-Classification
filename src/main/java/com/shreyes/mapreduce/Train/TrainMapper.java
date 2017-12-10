@@ -1,6 +1,7 @@
 package com.shreyes.mapreduce.Train;
 
 import com.shreyes.mapreduce.HyperPlane;
+import com.shreyes.mapreduce.Learn.SVM;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.io.Text;
 

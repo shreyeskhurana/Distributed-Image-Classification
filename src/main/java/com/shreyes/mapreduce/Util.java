@@ -1,29 +1,23 @@
 package com.shreyes.mapreduce;
 
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instances;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Util {
-//    public static Instances generateInstances(List<double[]> input) {
-//        ArrayList<Attribute> attributes = new ArrayList<Attribute>();
-//
-//        for(int i = 0; i < input.get(0).length; i++) {
-//            attributes.add(new Attribute(""+ i));
-//        }
-//
-//        Instances dataRaw = new Instances("TrainInstances", attributes , 0);
-//        dataRaw.setClassIndex(dataRaw.numAttributes() - 1);
-//
-//        for (double[] i: input) {
-//            dataRaw.add(new DenseInstance(1.0, i));
-//        }
-//
-//        return dataRaw;
-//    }
+    public static Double dotProduct(double[] u, double[] v) {
+        if(u == null || v == null || u.length != v.length)
+            return 0.0;
+
+        Double p = 0.0;
+
+        for(int i = 0; i < u.length; i++) {
+            p += u[i] * v[i];
+        }
+
+        return p;
+    }
 
     public static Double[][] matMultiply(double[][] A, double[][] B) {
         int L = A.length, M = A[0].length, N = B[0].length;
@@ -44,5 +38,32 @@ public class Util {
         }
 
         return C;
+    }
+
+    public static HyperPlane readModelFromFile(String[] args) {
+        Double[] w = new Double[0];
+        Double b = 0.0;
+
+         try {
+            BufferedReader reader =
+                    new BufferedReader(new FileReader(new File(args[0] + "/Train/Output/*.txt")));
+
+            String lineElements[] = reader.readLine().split(",");
+            w = new Double[lineElements.length];
+
+            for(int i = 0; i < lineElements.length; i++) {
+                w[i] = (Double.parseDouble(lineElements[i]));
+            }
+
+            b = Double.parseDouble(reader.readLine());
+
+            reader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new HyperPlane(w, b);
+
     }
 }

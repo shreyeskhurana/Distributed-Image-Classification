@@ -13,7 +13,6 @@ import org.apache.hadoop.util.GenericOptionsParser;
 public class TrainingJob {
     public static void initiate (String[] args) throws Exception{
         Configuration conf = new Configuration();
-        conf.set("mapred.map.tasks", "1");
 
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
@@ -26,16 +25,18 @@ public class TrainingJob {
 
         job.setJarByClass(App.class);
         job.setMapperClass(TrainMapper.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(HyperPlane.class);
         job.setReducerClass(TrainReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(HyperPlane.class);
+        job.setNumReduceTasks(1);
 
         for (int i = 0; i < otherArgs.length - 1; ++i) {
-            FileInputFormat.addInputPath(job, new Path(otherArgs[i]));
+            FileInputFormat.addInputPath(job, new Path(otherArgs[i] + "/Train"));
         }
 
-        FileOutputFormat.setOutputPath(job,
-                new Path(otherArgs[otherArgs.length - 1]));
+        FileOutputFormat.setOutputPath(job, new Path(otherArgs[otherArgs.length - 1] + "/Train/Output"));
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }

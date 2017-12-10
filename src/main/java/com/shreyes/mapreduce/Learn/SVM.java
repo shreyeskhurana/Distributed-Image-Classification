@@ -1,4 +1,4 @@
-package com.shreyes.mapreduce.Train;
+package com.shreyes.mapreduce.Learn;
 
 import com.shreyes.mapreduce.HyperPlane;
 import com.shreyes.mapreduce.Util;
@@ -20,7 +20,8 @@ public class SVM {
      * trained model which can be used for testing.
      *
      * @param inputData: Training data in the format [x1, x2, ... , xm, y]
-     * @return Hyperplane with its coefficients and intercepts.
+     * @return Hyperplane with its coefficients and intercepts, i.e.
+     *         w and b from the equation y = w^Tx + b.
      */
     public static HyperPlane smo(List<double[]> inputData) {
         svm_problem prob = new svm_problem();
@@ -63,6 +64,10 @@ public class SVM {
         Double b = -model.rho[0];
 
         return new HyperPlane(w, b);
+    }
+
+    public static Boolean predictTwoClass(HyperPlane hp, double[] testInput) {
+        return (Util.dotProduct((double[]) hp.getWeights().toArray(), testInput) + hp.getBias().get()) > 0;
     }
 
     private static Double[][] generateWeightVector(svm_node[][] SV, double[][] C) {
