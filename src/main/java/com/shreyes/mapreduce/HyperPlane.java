@@ -8,7 +8,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class HyperPlane implements Writable {
-
     private Text w;
     private Text b;
 
@@ -24,7 +23,7 @@ public class HyperPlane implements Writable {
 
         if(w.length != 0) {
             for (int k = 0; k < w.length; k++) {
-                weights.append(Double.toString(w[k]) + ",");
+                weights.append(Double.toString(w[k])).append(",");
             }
 
             this.w.set(weights.toString().substring(0,weights.toString().length() -1));

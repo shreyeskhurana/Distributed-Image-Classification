@@ -24,6 +24,7 @@ public class TrainReducer extends Reducer <Text, HyperPlane, Text, Text>{
         for (HyperPlane hyperPlane : values) {
             Text weightList = hyperPlane.getWeights();
             String[] w_ = weightList.toString().split(",");
+
             for(int i = 0; i < w_.length; i++) {
                 w[i] += Double.parseDouble(w_[i]);
             }
