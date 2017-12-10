@@ -1,11 +1,7 @@
-package com.shreyes.mapreduce.TestAndValidation;
+package com.shreyes.mapreduce.Test;
 
 import com.shreyes.mapreduce.App;
-import com.shreyes.mapreduce.HyperPlane;
-import com.shreyes.mapreduce.Train.TrainMapper;
-import com.shreyes.mapreduce.Train.TrainReducer;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -13,11 +9,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-import java.net.URI;
-
-public class TestingJob {
-    public static void initiate (String[] args) throws Exception{
+public class TestJob {
+    public static Double initiate (String[] args) throws Exception{
         Configuration conf = new Configuration();
+        conf.set("total", "0");
+        conf.set("correct", "0");
 
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
@@ -28,19 +24,23 @@ public class TestingJob {
 
         Job job = Job.getInstance(conf, "Image Classification");
 
-        job.addCacheFile(new Path(otherArgs[0] + "/Train/Output/*.txt").toUri());
+        job.addCacheFile(new Path(otherArgs[0] + "/Train/Output/part-r-00000").toUri());
         job.setJarByClass(App.class);
         job.setMapperClass(TestMapper.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
-        job.setNumReduceTasks(1);
+        job.setNumReduceTasks(0);
 
         for (int i = 0; i < otherArgs.length - 1; ++i) {
-            FileInputFormat.addInputPath(job, new Path(otherArgs[i] + "/Test"));
+            FileInputFormat.addInputPath(job, new Path(otherArgs[i] + "/Test/Input"));
         }
 
         FileOutputFormat.setOutputPath(job, new Path(otherArgs[otherArgs.length - 1] + "/Test/Output"));
 
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        boolean result = job.waitForCompletion(true);
+
+        Integer total = Integer.parseInt(conf.get("total"));
+        Integer correct = Integer.parseInt(conf.get("correct"));
+        return correct / (double)total;
     }
 }
