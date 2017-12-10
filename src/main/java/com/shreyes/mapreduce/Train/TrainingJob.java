@@ -29,14 +29,14 @@ public class TrainingJob {
         job.setMapOutputValueClass(HyperPlane.class);
         job.setReducerClass(TrainReducer.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(HyperPlane.class);
+        job.setOutputValueClass(Text.class);
         job.setNumReduceTasks(1);
 
         for (int i = 0; i < otherArgs.length - 1; ++i) {
-            FileInputFormat.addInputPath(job, new Path(otherArgs[i] + "/Train"));
+            FileInputFormat.addInputPath(job, new Path(otherArgs[i]));
         }
 
-        FileOutputFormat.setOutputPath(job, new Path(otherArgs[otherArgs.length - 1] + "/Train/Output"));
+        FileOutputFormat.setOutputPath(job, new Path(otherArgs[otherArgs.length - 1]));
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }

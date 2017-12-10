@@ -33,7 +33,9 @@ public class TrainMapper extends Mapper<Object, Text, Text, HyperPlane> {
 
     @Override
     public void cleanup(Context context) throws IOException, InterruptedException {
-        if(valid1 && valid2)
-            context.write(new Text(""), SVM.smo(input));
+        if(valid1 && valid2) {
+            HyperPlane hp = SVM.smo(input);
+            context.write(new Text("dummy"), hp);
+        }
     }
 }

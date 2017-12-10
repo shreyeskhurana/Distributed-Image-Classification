@@ -1,7 +1,6 @@
 package com.shreyes.mapreduce;
 
-import org.apache.hadoop.io.ArrayWritable;
-import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
 import java.io.DataInput;
@@ -9,33 +8,37 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class HyperPlane implements Writable {
-    public static class DoubleArrayWritable extends ArrayWritable {
-        DoubleArrayWritable() {
-            super(DoubleWritable.class);
-        }
+
+    private Text w;
+    private Text b;
+
+    public HyperPlane() {
+        w = new Text();
+        b = new Text();
     }
-    private DoubleArrayWritable w;
-    private DoubleWritable b;
 
     public HyperPlane(Double[] w, Double b) {
-        this.w = new DoubleArrayWritable();
+        this.w = new Text();
 
-        DoubleWritable[] weights = new DoubleWritable[w.length];
+        StringBuilder weights = new StringBuilder();
 
-        for (int k = 0; k < w.length; k++) {
-            weights[k] = new DoubleWritable(w[k]);
-        }
+        if(w.length != 0) {
+            for (int k = 0; k < w.length; k++) {
+                weights.append(Double.toString(w[k]) + ",");
+            }
 
-        this.w.set(weights);
+            this.w.set(weights.toString().substring(0,weights.toString().length() -1));
+        } else this.w = new Text();
 
-        this.b = new DoubleWritable(b);
+        this.b = new Text();
+        this.b.set(Double.toString(b));
     }
 
-    public DoubleArrayWritable getWeights() {
+    public Text getWeights() {
         return w;
     }
 
-    public DoubleWritable getBias() {
+    public Text getBias() {
         return b;
     }
 
@@ -47,5 +50,10 @@ public class HyperPlane implements Writable {
     public void write(DataOutput out) throws IOException {
         w.write(out);
         b.write(out);
+    }
+
+    @Override
+    public String toString() {
+        return w.toString() + "\n" + b.toString();
     }
 }

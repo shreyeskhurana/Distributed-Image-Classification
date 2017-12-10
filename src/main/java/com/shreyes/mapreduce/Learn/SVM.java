@@ -67,7 +67,7 @@ public class SVM {
     }
 
     public static Boolean predictTwoClass(HyperPlane hp, double[] testInput) {
-        return (Util.dotProduct((double[]) hp.getWeights().toArray(), testInput) + hp.getBias().get()) > 0;
+        return true;//(Util.dotProduct((double[]) hp.getWeights().toArray(), testInput) + hp.getBias().get()) > 0;
     }
 
     private static Double[][] generateWeightVector(svm_node[][] SV, double[][] C) {

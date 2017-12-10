@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class TrainReducer extends Reducer <Text, HyperPlane, Text, HyperPlane>{
+public class TrainReducer extends Reducer <Text, HyperPlane, Text, Text>{
     private Double[] w = new Double[21*21*7];
     private Double b = 0.0, count = 0.0;
 
@@ -13,21 +13,22 @@ public class TrainReducer extends Reducer <Text, HyperPlane, Text, HyperPlane>{
     protected void setup(Context context) throws IOException, InterruptedException {
         super.setup(context);
 
-        for(Double wi: w) {
-            wi = 0.0;
+        for(int i = 0; i < w.length; i++) {
+            w[i] = 0.0;
         }
     }
 
+    @Override
     public void reduce(Text key, Iterable<HyperPlane> values, Context context)
             throws IOException, InterruptedException {
         for (HyperPlane hyperPlane : values) {
-            double[] w_ = (double[]) hyperPlane.getWeights().toArray();
-
+            Text weightList = hyperPlane.getWeights();
+            String[] w_ = weightList.toString().split(",");
             for(int i = 0; i < w_.length; i++) {
-                w[i] += w_[i];
+                w[i] += Double.parseDouble(w_[i]);
             }
 
-            b += hyperPlane.getBias().get();
+            b += Double.parseDouble(hyperPlane.getBias().toString());
             count++;
         }
 
@@ -36,6 +37,7 @@ public class TrainReducer extends Reducer <Text, HyperPlane, Text, HyperPlane>{
 
     @Override
     public void cleanup(Context context) throws IOException, InterruptedException {
-        context.write(new Text(), new HyperPlane(w, b));
+        HyperPlane hp = new HyperPlane(w, b);
+        context.write(hp.getWeights(), hp.getBias());
     }
 }

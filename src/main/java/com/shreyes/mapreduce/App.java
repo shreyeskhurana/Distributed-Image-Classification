@@ -7,7 +7,7 @@ public class App {
     public static void main(String[] args) {
         try {
             TrainingJob.initiate(args);
-            TestingJob.initiate(args);
+//            TestingJob.initiate(args);
         } catch (Exception e) {
             e.printStackTrace();
         }
